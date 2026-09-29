@@ -1,69 +1,60 @@
-﻿# Customer Shopping Behavior Analysis using Python & SQL
+# Customer Shopping Behavior Analysis — Python & SQL
 
-A data engineering and data analysis project that demonstrates how to build a simple **ETL (Extract, Transform, Load) pipeline** using Python, Pandas, SQLAlchemy, and MySQL.
+An end-to-end **ETL pipeline** built with Python, Pandas, and MySQL to clean, transform, and analyze customer shopping data.
 
-The project takes raw customer shopping behavior data from a CSV file, cleans and transforms the data using Python, saves the processed dataset, and loads the final data into a MySQL database for further analysis using SQL.
-
----
+The project is structured as a modular ETL pipeline and includes **Bash-based automation and execution logging** using Git Bash.
 
 ## Project Overview
 
-The goal of this project is to simulate a real-world data pipeline where raw customer transaction data needs to be:
-
-1. **Extracted** from a CSV file
-2. **Cleaned and transformed** using Python
-3. **Saved** as a processed CSV file
-4. **Loaded** into a MySQL database
-5. Made ready for further **SQL-based analysis**
-
-This project helped me practice important data engineering concepts such as data extraction, data cleaning, transformation, database connectivity, and loading structured data into SQL.
-
----
-
-## ETL Pipeline
+The pipeline takes raw customer shopping data, processes it through separate ETL stages, loads the cleaned data into MySQL, and records pipeline execution details in a log file.
 
 ```text
-                Raw CSV Dataset
-                       │
-                       ▼
-              ┌─────────────────┐
-              │     EXTRACT     │
-              │     Pandas      │
-              └────────┬────────┘
-                       │
-                       ▼
-              ┌─────────────────┐
-              │    TRANSFORM    │
-              │ Data Cleaning   │
-              │ Missing Values  │
-              │ Column Naming   │
-              │ Feature Creation│
-              └────────┬────────┘
-                       │
-              ┌────────┴────────┐
-              │                 │
-              ▼                 ▼
-       Processed CSV       MySQL Database
-                              │
-                              ▼
-                       SQL Analysis
+                    Raw CSV Data
+                         │
+                         ▼
+                    ┌─────────┐
+                    │ Extract │
+                    └────┬────┘
+                         │
+                         ▼
+                   ┌───────────┐
+                   │ Transform │
+                   └─────┬─────┘
+                         │
+                         ▼
+                    Clean Data
+                         │
+                         ▼
+                     ┌──────┐
+                     │ Load │
+                     └───┬──┘
+                         │
+                         ▼
+                    MySQL Database
+                         │
+                         ▼
+                    SQL Analysis
+
+
+              Bash Automation
+                     │
+                     ▼
+               main.py Pipeline
+                     │
+                     ▼
+              logs/pipeline.log
 ```
 
----
+## Tech Stack
 
-## Technologies Used
-
-| Technology        | Purpose                                |
-| ----------------- | -------------------------------------- |
-| **Python**        | ETL pipeline development               |
-| **Pandas**        | Data extraction and transformation     |
-| **SQLAlchemy**    | Database connection and data loading   |
-| **PyMySQL**       | MySQL database driver                  |
-| **MySQL**         | Data storage and SQL analysis          |
-| **python-dotenv** | Secure environment variable management |
-| **Git & GitHub**  | Version control                        |
-
----
+* **Python**
+* **Pandas**
+* **MySQL**
+* **SQLAlchemy**
+* **PyMySQL**
+* **python-dotenv**
+* **Bash / Git Bash**
+* **Git & GitHub**
 
 ## Project Structure
 
@@ -72,386 +63,230 @@ customer_analysis_using_python_sql/
 │
 ├── data/
 │   ├── customer_shopping_behavior.csv
-│   │
 │   └── processed/
 │       └── clean_customer_shopping_behavior.csv
 │
 ├── src/
-│   ├── database.py
 │   ├── extract.py
 │   ├── transform.py
+│   ├── database.py
 │   └── load.py
+│
+├── script/
+│   └── run_pipeline.sh
+│
+├── logs/
+│   └── pipeline.log
 │
 ├── main.py
 ├── .gitignore
 └── README.md
 ```
 
----
+## ETL Pipeline
 
-## Dataset
+### 1. Extract
 
-The project uses a customer shopping behavior dataset containing information about customer purchases and shopping patterns.
+The `extract.py` module reads the raw customer shopping dataset using Pandas.
 
-Some of the important attributes include:
+The raw data is loaded into a DataFrame and passed to the transformation stage.
 
-* Customer information
-* Age
-* Category
-* Purchase amount
-* Review rating
-* Frequency of purchases
-* Discount information
-* Promo code usage
-* Other customer purchasing attributes
+### 2. Transform
 
-The raw dataset is stored in:
+The `transform.py` module handles data cleaning and transformation.
 
-```text
-data/customer_shopping_behavior.csv
-```
+The process includes:
 
-The cleaned dataset is generated in:
+* Checking the dataset
+* Handling missing review ratings
+* Standardizing column names
+* Renaming columns
+* Creating customer age groups
+* Converting purchase frequency into numerical values
+* Removing unnecessary or redundant information
 
-```text
-data/processed/clean_customer_shopping_behavior.csv
-```
+The cleaned data is then prepared for loading.
 
----
+### 3. Save Processed Data
 
-# ETL Process
-
-## 1. Extract
-
-The extraction step uses **Pandas** to load the raw CSV dataset.
-
-```python
-import pandas as pd
-
-def load_customer_data():
-    return pd.read_csv("data/customer_shopping_behavior.csv")
-```
-
-The extracted data is then passed to the transformation stage.
-
----
-
-## 2. Transform
-
-The transformation stage performs several data-cleaning and feature-engineering operations.
-
-### Check the dataset
-
-The project initially examines:
-
-* First few records
-* Dataset information
-* Descriptive statistics
-* Missing values
-
-```python
-df.head()
-df.info()
-df.describe(include="all")
-df.isnull().sum()
-```
-
-### Handle Missing Values
-
-Missing review ratings are filled using the **median review rating within each product category**.
-
-```python
-df["review_rating"] = (
-    df.groupby("category")["review_rating"]
-      .transform(lambda x: x.fillna(x.median()))
-)
-```
-
-This approach is preferable to simply using the overall median because different product categories may have different typical review ratings.
-
----
-
-### Standardize Column Names
-
-Column names are converted to lowercase and spaces are replaced with underscores.
-
-```python
-df.columns = df.columns.str.lower()
-df.columns = df.columns.str.replace(" ", "_")
-```
-
-The original purchase amount column is also renamed:
-
-```text
-purchase_amount_(usd)
-```
-
-to:
-
-```text
-purchase_amount
-```
-
-This makes the column names easier to work with in Python and SQL.
-
----
-
-### Create Age Groups
-
-A new `age_group` column is created using age quantiles.
-
-The customers are categorized into:
-
-* Young Adult
-* Adult
-* Middle-aged
-* Senior
-
-```python
-labels = [
-    "Young Adult",
-    "Adult",
-    "Middle-aged",
-    "Senior"
-]
-
-df["age_group"] = pd.qcut(
-    df["age"],
-    q=4,
-    labels=labels
-)
-```
-
-This creates an additional feature that can be useful for customer segmentation and analysis.
-
----
-
-### Convert Purchase Frequency
-
-The categorical purchase frequency values are converted into an approximate number of days.
-
-For example:
-
-| Frequency      | Days |
-| -------------- | ---: |
-| Weekly         |    7 |
-| Fortnightly    |   14 |
-| Bi-Weekly      |   14 |
-| Monthly        |   30 |
-| Quarterly      |   90 |
-| Every 3 Months |   90 |
-| Annually       |  365 |
-
-This creates a new column:
-
-```text
-purchase_frequency_days
-```
-
-The transformation makes the categorical information easier to use for numerical analysis.
-
----
-
-### Remove Redundant Data
-
-The project checks whether:
-
-```text
-discount_applied
-```
-
-and
-
-```text
-promo_code_used
-```
-
-contain duplicate information.
-
-If the two columns contain the same information, the redundant `promo_code_used` column is removed.
-
----
-
-# 3. Load
-
-After transformation, the cleaned dataset is saved as a CSV file:
+After transformation, the cleaned dataset is saved separately from the original raw data.
 
 ```text
 data/processed/clean_customer_shopping_behavior.csv
 ```
 
-The transformed DataFrame is then loaded into MySQL using **SQLAlchemy**.
+Keeping the processed dataset separate helps preserve the original source data.
 
-```python
-df.to_sql(
-    "customer_purchase_data",
-    con=engine,
-    if_exists="replace",
-    index=False
-)
-```
+### 4. Load into MySQL
 
-The resulting MySQL table is:
+The `database.py` module manages the MySQL database connection.
+
+The `load.py` module loads the transformed DataFrame into MySQL using SQLAlchemy.
+
+The final table is:
 
 ```text
 customer_purchase_data
 ```
 
+Database credentials are stored using environment variables rather than being hard-coded in the Python files.
+
 ---
 
-# Database Connection
+# Pipeline Automation
 
-Database credentials are managed through environment variables rather than being directly written into the Python source code.
+After building the ETL pipeline, I automated its execution using a **Bash script**.
 
-The project uses:
-
-```python
-from dotenv import load_dotenv
-```
-
-and:
-
-```python
-load_dotenv()
-```
-
-The database connection is created using SQLAlchemy:
-
-```python
-create_engine(
-    "mysql+pymysql://..."
-)
-```
-
-The following environment variables are used:
+The script is located at:
 
 ```text
-DB_USER
-DB_PASSWORD
-DB_HOST
-DB_PORT
-DB_NAME
+script/run_pipeline.sh
 ```
+
+It acts as a simple entry point for running the complete ETL pipeline.
+
+### Automation Script
+
+```bash
+#!/bin/bash
+
+echo "Pipeline started: $(date)" > logs/pipeline.log
+python ../main.py >> logs/pipeline.log
+echo "Pipeline finished: $(date)" >> logs/pipeline.log
+```
+
+Instead of manually running the Python pipeline every time, the Bash script executes `main.py` and records the execution information.
+
+### Run the Pipeline
+
+Using Git Bash:
+
+```bash
+./script/run_pipeline.sh
+```
+
+This starts the complete ETL process through the Bash script.
 
 ---
 
-# Environment Setup
+# Pipeline Logging
 
-## 1. Clone the Repository
+I also added basic logging to track pipeline execution.
+
+The log file is:
+
+```text
+logs/pipeline.log
+```
+
+The script records:
+
+* Pipeline start time
+* Output generated while running the Python pipeline
+* Pipeline completion time
+
+Example:
+
+```text
+Pipeline started: Wed Sep 30 02:20:15 IST 2026
+...
+Pipeline finished: Wed Sep 30 02:20:18 IST 2026
+```
+
+The `>>` operator appends the Python pipeline output to the log file instead of displaying it only in the terminal.
+
+### View the Logs
+
+```bash
+cat logs/pipeline.log
+```
+
+This makes it easy to verify whether the pipeline executed and when it started and finished.
+
+---
+
+# Why Automation and Logging?
+
+The Bash automation provides a single command to execute the complete pipeline instead of manually running individual Python files.
+
+Logging provides a simple execution record that can be checked later for:
+
+* Pipeline execution time
+* Successful completion
+* Python output
+* Basic troubleshooting
+
+This also makes the project closer to a real-world data pipeline workflow where **automation, monitoring, and troubleshooting** are important parts of the process.
+
+---
+
+# Running the Project
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Shubham1io/customer_analysis_using_python_sql.git
-```
 
-Navigate into the project:
-
-```bash
 cd customer_analysis_using_python_sql
 ```
 
----
-
-## 2. Create a Virtual Environment
-
-Windows:
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate it:
+Activate it on Windows:
 
 ```bash
 .venv\Scripts\activate
 ```
 
----
-
-## 3. Install Dependencies
-
-Install the required Python packages:
+### 3. Install Dependencies
 
 ```bash
 pip install pandas sqlalchemy pymysql python-dotenv
 ```
 
----
+### 4. Configure MySQL
 
-## 4. Configure Environment Variables
-
-Create a `.env` file in the project root:
-
-```text
-DB_USER=your_mysql_username
-DB_PASSWORD=your_mysql_password
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=your_database_name
-```
-
-> **Important:** Never commit your `.env` file to GitHub. The project already includes `.env` in `.gitignore`.
-
----
-
-## 5. Create the MySQL Database
-
-Create the database in MySQL:
+Create the database:
 
 ```sql
 CREATE DATABASE customer_analysis;
 ```
 
-Then update your `.env` file:
+Create a `.env` file:
 
-```text
+```env
+DB_USER=your_mysql_username
+DB_PASSWORD=your_mysql_password
+DB_HOST=localhost
+DB_PORT=3306
 DB_NAME=customer_analysis
 ```
 
----
+### 5. Run Through Bash Automation
 
-# Run the Project
-
-The complete ETL pipeline can be executed through:
+Open Git Bash in the project directory and run:
 
 ```bash
-python main.py
+./script/run_pipeline.sh
 ```
 
-The pipeline performs the following operations:
+### 6. Check Pipeline Logs
 
-```text
-Load Raw CSV
-     ↓
-Clean & Transform Data
-     ↓
-Save Processed CSV
-     ↓
-Create MySQL Connection
-     ↓
-Load Data into MySQL
-```
-
-If everything executes successfully, the program displays:
-
-```text
-Data loaded successfully!
+```bash
+cat logs/pipeline.log
 ```
 
 ---
 
 # SQL Analysis
 
-Once the data has been loaded into MySQL, the table can be queried using SQL.
+Once the data has been loaded into MySQL, SQL queries can be used to analyze customer purchasing behavior.
 
-Example:
-
-```sql
-SELECT *
-FROM customer_purchase_data
-LIMIT 10;
-```
-
-Example of calculating total purchase amount by category:
+For example:
 
 ```sql
 SELECT
@@ -462,7 +297,7 @@ GROUP BY category
 ORDER BY total_purchase_amount DESC;
 ```
 
-Example of calculating average review rating:
+Average review rating by category:
 
 ```sql
 SELECT
@@ -473,44 +308,44 @@ GROUP BY category
 ORDER BY average_rating DESC;
 ```
 
-These SQL queries can be extended to perform customer segmentation, purchase analysis, category-level analysis, and other business-oriented analysis.
-
 ---
 
 # Key Learning Outcomes
 
-Through this project, I practiced:
+Through this project, I gained hands-on experience with:
 
-* Building a basic ETL pipeline
-* Reading CSV files using Pandas
-* Exploring and profiling datasets
-* Handling missing values
-* Group-based data imputation
-* Data cleaning and standardization
+* Building a modular ETL pipeline
+* Extracting data using Python and Pandas
+* Cleaning and transforming data
 * Feature engineering
-* Converting categorical values into numerical features
-* Removing redundant columns
-* Working with environment variables
-* Connecting Python to MySQL
-* Using SQLAlchemy
-* Loading Pandas DataFrames into SQL tables
-* Performing SQL-based data analysis
+* Saving processed datasets
+* Connecting Python with MySQL
+* Loading data into MySQL using SQLAlchemy
+* Managing database credentials with environment variables
+* Automating pipeline execution using Bash
+* Working with Git Bash/Linux commands
+* Creating and executing shell scripts
+* Redirecting command output to log files
+* Adding timestamps to pipeline logs
+* Verifying pipeline execution through logs
+* Using SQL for customer data analysis
 
 ---
 
 # Future Improvements
 
-The project can be extended with:
-
-* [ ] Add data validation checks
-* [ ] Add logging instead of `print()` statements
-* [ ] Add exception handling
-* [ ] Add automated data quality checks
-* [ ] Add more advanced SQL analysis
-* [ ] Create customer segmentation using RFM analysis
-* [ ] Schedule the ETL pipeline
-* [ ] Containerize the project using Docker
-* [ ] Deploy the pipeline to AWS
+* Add structured application logging
+* Add error handling and failure logs
+* Add data validation checks
+* Schedule automated pipeline execution
+* Add pipeline monitoring
+* Containerize the pipeline using Docker
+* Deploy the pipeline to AWS
 
 ---
 
+# Author
+
+**Shubham Kumar**
+
+GitHub: https://github.com/Shubham1io
