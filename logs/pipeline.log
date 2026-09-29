@@ -1,0 +1,134 @@
+Pipeline started: Wed Sep 30 02:34:19 IST 2026
+   Customer ID  Age  ... Payment Method Frequency of Purchases
+0            1   55  ...          Venmo            Fortnightly
+1            2   19  ...           Cash            Fortnightly
+2            3   50  ...    Credit Card                 Weekly
+3            4   21  ...         PayPal                 Weekly
+4            5   45  ...         PayPal               Annually
+
+[5 rows x 18 columns]
+<class 'pandas.DataFrame'>
+RangeIndex: 3900 entries, 0 to 3899
+Data columns (total 18 columns):
+ #   Column                  Non-Null Count  Dtype  
+---  ------                  --------------  -----  
+ 0   Customer ID             3900 non-null   int64  
+ 1   Age                     3900 non-null   int64  
+ 2   Gender                  3900 non-null   str    
+ 3   Item Purchased          3900 non-null   str    
+ 4   Category                3900 non-null   str    
+ 5   Purchase Amount (USD)   3900 non-null   int64  
+ 6   Location                3900 non-null   str    
+ 7   Size                    3900 non-null   str    
+ 8   Color                   3900 non-null   str    
+ 9   Season                  3900 non-null   str    
+ 10  Review Rating           3863 non-null   float64
+ 11  Subscription Status     3900 non-null   str    
+ 12  Shipping Type           3900 non-null   str    
+ 13  Discount Applied        3900 non-null   str    
+ 14  Promo Code Used         3900 non-null   str    
+ 15  Previous Purchases      3900 non-null   int64  
+ 16  Payment Method          3900 non-null   str    
+ 17  Frequency of Purchases  3900 non-null   str    
+dtypes: float64(1), int64(4), str(13)
+memory usage: 548.6 KB
+None
+        Customer ID          Age  ... Payment Method Frequency of Purchases
+count   3900.000000  3900.000000  ...           3900                   3900
+unique          NaN          NaN  ...              6                      7
+top             NaN          NaN  ...         PayPal         Every 3 Months
+freq            NaN          NaN  ...            677                    584
+mean    1950.500000    44.068462  ...            NaN                    NaN
+std     1125.977353    15.207589  ...            NaN                    NaN
+min        1.000000    18.000000  ...            NaN                    NaN
+25%      975.750000    31.000000  ...            NaN                    NaN
+50%     1950.500000    44.000000  ...            NaN                    NaN
+75%     2925.250000    57.000000  ...            NaN                    NaN
+max     3900.000000    70.000000  ...            NaN                    NaN
+
+[11 rows x 18 columns]
+Customer ID                0
+Age                        0
+Gender                     0
+Item Purchased             0
+Category                   0
+Purchase Amount (USD)      0
+Location                   0
+Size                       0
+Color                      0
+Season                     0
+Review Rating             37
+Subscription Status        0
+Shipping Type              0
+Discount Applied           0
+Promo Code Used            0
+Previous Purchases         0
+Payment Method             0
+Frequency of Purchases     0
+dtype: int64
+Customer ID               0
+Age                       0
+Gender                    0
+Item Purchased            0
+Category                  0
+Purchase Amount (USD)     0
+Location                  0
+Size                      0
+Color                     0
+Season                    0
+Review Rating             0
+Subscription Status       0
+Shipping Type             0
+Discount Applied          0
+Promo Code Used           0
+Previous Purchases        0
+Payment Method            0
+Frequency of Purchases    0
+dtype: int64
+Index(['customer_id', 'age', 'gender', 'item_purchased', 'category',
+       'purchase_amount', 'location', 'size', 'color', 'season',
+       'review_rating', 'subscription_status', 'shipping_type',
+       'discount_applied', 'promo_code_used', 'previous_purchases',
+       'payment_method', 'frequency_of_purchases'],
+      dtype='str')
+   age    age_group
+0   55  Middle-aged
+1   19  Young Adult
+2   50  Middle-aged
+3   21  Young Adult
+4   45  Middle-aged
+5   46  Middle-aged
+6   63       Senior
+7   27  Young Adult
+8   26  Young Adult
+9   57  Middle-aged
+   purchase_frequency_days frequency_of_purchases
+0                       14            Fortnightly
+1                       14            Fortnightly
+2                        7                 Weekly
+3                        7                 Weekly
+4                      365               Annually
+5                        7                 Weekly
+6                       90              Quarterly
+7                        7                 Weekly
+8                      365               Annually
+9                       90              Quarterly
+  discount_applied promo_code_used
+0              Yes             Yes
+1              Yes             Yes
+2              Yes             Yes
+3              Yes             Yes
+4              Yes             Yes
+5              Yes             Yes
+6              Yes             Yes
+7              Yes             Yes
+8              Yes             Yes
+9              Yes             Yes
+True
+Index(['customer_id', 'age', 'gender', 'item_purchased', 'category',
+       'purchase_amount', 'location', 'size', 'color', 'season',
+       'review_rating', 'subscription_status', 'shipping_type',
+       'discount_applied', 'previous_purchases', 'payment_method',
+       'frequency_of_purchases', 'age_group', 'purchase_frequency_days'],
+      dtype='str')
+Data loaded successfully !
